@@ -1,0 +1,47 @@
+header {
+  width: 100%;
+  float: left;
+  height: 63px;
+  background: #5303bc;
+  border-bottom: solid 1px #ffffff;
+  position: fixed;
+}
+
+.container {
+  width: 80%;
+  margin: 0 auto;
+}
+
+nav {
+  float: right;
+}
+
+nav ul li a {
+  padding: 20px;
+  color: #ffffff;
+  text-decoration: none;
+}
+
+a.logo {
+  padding: 7px 0;
+}
+
+nav ul li a:hover {
+  background: #ffffff;
+}
+
+section {
+  float: left;
+  width: 100%;
+}
+
+section img {
+  width: 100%;
+}
+
+section {
+  height: calc(100vh -63px);
+  margin-top: 63px;
+  scroll-behavior: smooth;
+  overflow-y: scroll;
+}
