@@ -4,6 +4,7 @@
   align-items: center;
   justify-content: center;
   font-weight: 400;
+  padding: 0.5rem;
 }
 
 .Joke-buttons {
@@ -19,7 +20,7 @@
   font-size: 1.2rem;
 }
 
-.Joke-votes {
+.joke-votes {
   width: 50px;
   height: 50px;
   line-height: 50px;

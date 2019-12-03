@@ -1,8 +1,8 @@
-import React, { Component } from 'react';
-import Joke from './Joke';
-import axios from 'axios';
-import uuid from 'uuid/v4';
-import './JokeList.css';
+import React, { Component } from "react";
+import Joke from "./Joke";
+import axios from "axios";
+import uuid from "uuid/v4";
+import "./JokeList.css";
 
 class JokeList extends Component {
   static defaultProps = {
@@ -11,47 +11,76 @@ class JokeList extends Component {
 
   constructor(props) {
     super(props);
-    this.state = { jokes: [] };
+    this.state = {
+      jokes: JSON.parse(window.localStorage.getItem("jokes") || "[]"),
+      loading: false
+    };
+    this.handleClick = this.handleClick.bind(this);
   }
   async componentDidMount() {
-    // Loads Jokes
+    if (this.state.jokes.length === 0) this.getJokes(); //it will prevent by loading the jokes if there will be availble from before
+  }
+
+  async getJokes() {
     let jokes = [];
 
     while (jokes.length < this.props.numJokesToGet) {
-      let res = await axios.get('https://icanhazdadjoke.com/', {
-        headers: { Accept: 'application/json' }
+      let res = await axios.get("https://icanhazdadjoke.com/", {
+        headers: { Accept: "application/json" }
       });
       jokes.push({ id: uuid(), text: res.data.joke, votes: 0 });
     }
-    this.setState({
-      jokes: jokes
-    });
+    this.setState(
+      st => ({
+        loading: false,
+        jokes: [...st.jokes, ...jokes]
+      }),
+      () =>
+        window.localStorage.setItem("jokes", JSON.stringify(this.state.jokes)) //this will wait for the update the localstorage jokes and then fetch new one below them
+    );
   }
 
   //   Handling the vote
   handleVote(id, delta) {
-    this.setState(st => ({
-      jokes: st.jokes.map(j =>
-        j.id === id ? { ...j, votes: j.votes + delta } : j
-      )
-    }));
+    this.setState(
+      st => ({
+        jokes: st.jokes.map(j =>
+          j.id === id ? { ...j, votes: j.votes + delta } : j
+        )
+      }),
+      () =>
+        window.localStorage.setItem("jokes", JSON.stringify(this.state.jokes))
+    );
+  }
+  handleClick() {
+    this.setState({ loading: true }, this.getJokes);
   }
 
   render() {
+    if (this.state.loading) {
+      return (
+        <div className="Jokelist-sppiner">
+          <i className="far fa-8x fa-laugh fa-spin" />
+          <h1 className="Jokelist-title">Loading...</h1>
+        </div>
+      );
+    }
     return (
-      <div className='JokeList'>
-        <div className='JokeList-sidebar'>
-          <h1 className='Jokelist-title'>
+      <div className="JokeList">
+        <div className="JokeList-sidebar">
+          <h1 className="Jokelist-title">
             <span>Dad</span> Jokes
           </h1>
           <img
-            alt='icon'
-            src='https://assets.dryicons.com/uploads/icon/svg/8927/0eb14c71-38f2-433a-bfc8-23d9c99b3647.svg'
+            alt="icon"
+            src="https://assets.dryicons.com/uploads/icon/svg/8927/0eb14c71-38f2-433a-bfc8-23d9c99b3647.svg"
           />
-          <button className='JokeList-getmore'>New Jokes</button>
+          <button className="JokeList-getmore" onClick={this.handleClick}>
+            New Jokes
+          </button>
         </div>
 
-        <div className='JokeList-jokes'>
+        <div className="JokeList-jokes">
           {this.state.jokes.map(j => (
             <Joke
               key={j.id}
